@@ -9,7 +9,17 @@
 
     .App-header {
         background-color: #a8a8a8;
-        padding: 5rem;
+        padding: 3rem 5rem;
+        width: 10rem;
         border-radius: 0.5rem;
+        display: flex;
+        flex-direction: column;
+
+        button {
+            display: block;
+            padding: 0.3rem 1rem;
+            margin: 2rem auto;
+            cursor: pointer;
+        }
     }
 }
