@@ -4,7 +4,7 @@ import Papa from "papaparse";
 const FileUpload = () => {
 	const [file, setFile] = useState(null);
 	const [tableData, setTableData] = useState([]);
-    const [setFileName] = useState("No file chosen");
+    const [fileName, setFileName] = useState("No file chosen");
     const fileInputRef = useRef(null);
 
 	const handleFileUpload = (e) => {
@@ -33,7 +33,7 @@ const FileUpload = () => {
 		setFile(null);
 		setTableData([]);
         setFileName("No file chosen");
-        fileInputRef.current.value = null;
+        fileInputRef.current.value = '';
 	};
 
 	return (
