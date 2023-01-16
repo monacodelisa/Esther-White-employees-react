@@ -1,15 +1,17 @@
-import React, { useState, useRef} from "react";
+import React, { useState, useRef } from "react";
 import Papa from "papaparse";
+import "./CsvReader.scss";
 
 const FileUpload = () => {
 	const [file, setFile] = useState(null);
 	const [tableData, setTableData] = useState([]);
-    const [fileName, setFileName] = useState("No file chosen");
-    const fileInputRef = useRef(null);
+	const [fileName, setFileName] = useState("No file chosen");
+	const fileInputRef = useRef(null);
+	const [isDataLoaded, setIsDataLoaded] = useState(false);
 
 	const handleFileUpload = (e) => {
 		setFile(e.target.files[0]);
-        setFileName(e.target.files[0].name);
+		setFileName(e.target.files[0].name);
 	};
 
 	const parseCSVData = () => {
@@ -26,21 +28,31 @@ const FileUpload = () => {
 				skipEmptyLines: true,
 			});
 			setTableData(data.data);
+			setIsDataLoaded(true);
 		};
 	};
 
 	const clearTableData = () => {
 		setFile(null);
 		setTableData([]);
-        setFileName("No file chosen");
-        fileInputRef.current.value = '';
+		setFileName("No file chosen");
+		fileInputRef.current.value = "";
+		setIsDataLoaded(false);
 	};
 
 	return (
-		<div>
-			<input type="file" ref={fileInputRef} onChange={(e) => handleFileUpload(e)} />
-			<button onClick={() => parseCSVData()}>Submit</button>
-			{tableData.length === 0 ? (<p>No data to display</p>) : (
+		<div className="container">
+			<input
+				type="file"
+				ref={fileInputRef}
+				onChange={(e) => handleFileUpload(e)}
+			/>
+			<button onClick={() => isDataLoaded ? clearTableData(): parseCSVData()}>
+				{isDataLoaded ? "Clear" : "Submit"}
+			</button>
+			{tableData.length === 0 ? (
+				<p>No data to display</p>
+			) : (
 				<table>
 					<thead>
 						<tr>
@@ -62,10 +74,8 @@ const FileUpload = () => {
 					</tbody>
 				</table>
 			)}
-			<button onClick={() => clearTableData()}>Clear</button>
 		</div>
 	);
 };
 
 export default FileUpload;
-
