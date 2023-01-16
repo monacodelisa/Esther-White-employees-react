@@ -1,6 +1,6 @@
 import {useState } from 'react'
 
-function CsvReader() {
+export default function CsvReader() {
     const [csvFile, setCSvFile] = useState();
 
     return (
