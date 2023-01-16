@@ -3,6 +3,18 @@ import {useState } from 'react'
 export default function CsvReader() {
     const [csvFile, setCSvFile] = useState();
 
+    const submit = () => {
+        const file = csvFile;
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            const text = e.target.result;
+            console.log(text);
+        }
+
+        reader.readAsText(file);
+    }
+
     return (
         <form id='csv-form'>
             <input 
@@ -14,7 +26,16 @@ export default function CsvReader() {
             }}
             >
             </input>
-            <button>Submit</button>
+            <button
+            onClick={(e)=> {
+                e.preventDefault()
+                if(csvFile)submit()
+
+                
+            }}
+            >
+                Submit
+            </button>
         </form>
     );
 }
