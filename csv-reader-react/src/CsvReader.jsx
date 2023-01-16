@@ -8,8 +8,18 @@ const FileUpload = () => {
 	const [fileName, setFileName] = useState("No file chosen");
 	const fileInputRef = useRef(null);
 	const [isDataLoaded, setIsDataLoaded] = useState(false);
+	const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
 	const handleFileUpload = (e) => {
+		let selectedFile = e.target.files[0];
+			if (selectedFile && selectedFile.type === 'text/csv' || selectedFile.name.endsWith('.csv')) {
+				setFile(selectedFile);
+				setFileName(selectedFile.name);
+				setIsButtonDisabled(false);
+			} else {
+				setIsButtonDisabled(true);
+				alert('Please select a valid CSV file');
+			}
 		setFile(e.target.files[0]);
 		setFileName(e.target.files[0].name);
 	};
@@ -47,7 +57,7 @@ const FileUpload = () => {
 				ref={fileInputRef}
 				onChange={(e) => handleFileUpload(e)}
 			/>
-			<button onClick={() => isDataLoaded ? clearTableData(): parseCSVData()}>
+			<button onClick={() => isDataLoaded ? clearTableData(): parseCSVData()} disabled={isButtonDisabled}>
 				{isDataLoaded ? "Clear" : "Submit"}
 			</button>
 			{tableData.length === 0 ? (

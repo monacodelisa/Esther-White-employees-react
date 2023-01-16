@@ -1,7 +1,6 @@
 import { Helmet } from 'react-helmet';
-import './App.scss';
-import './CsvReader';
 import CsvReader from './CsvReader';
+import './App.scss';
 
 function App() {
   return (
