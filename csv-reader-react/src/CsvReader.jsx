@@ -1,85 +1,44 @@
 import React, { useState, useRef } from "react";
 import Papa from "papaparse";
-import moment from 'moment'
+import moment from "moment";
 import "./CsvReader.scss";
 
 // const moment = require('moment');
 
 const findLongestWorkingPair = (tableData) => {
-    let longestPair = { emp1: null, emp2: null, daysWorked: 0 };
-    if(!tableData || tableData.length === 0) {
-        return "no data available";
-    }
-    for (let i = 0; i < tableData.length; i++) {
-        for (let j = i + 1; j < tableData.length; j++) {
-            let emp1 = tableData[i];
-            let emp2 = tableData[j];
+	let longestWorkingPair = {};
+	let longestWorkingPairDays = 0;
 
-            if (emp1.EmpID !== emp2.EmpID && emp1.ProjectID === emp2.ProjectID) {
-                let dateFrom1 = moment(emp1.DateFrom, "YYYY-MM-DD");
-                let dateTo1 = moment(emp1.DateTo, "YYYY-MM-DD");
-                let dateFrom2 = moment(emp2.DateFrom, "YYYY-MM-DD");
-                let dateTo2 = moment(emp2.DateTo, "YYYY-MM-DD");
-                let overlapStart = moment.min(dateFrom1, dateFrom2);
-                let overlapEnd = moment.max(dateTo1, dateTo2);
-                if (overlapStart.isBefore(overlapEnd)) {
-                  let daysWorked = overlapEnd.diff(overlapStart, 'days') + 1;
-				  console.log(daysWorked)
-                    if (daysWorked > longestPair.daysWorked) {
-                        longestPair = {
-                            emp1: emp1.EmpID,
-                            emp2: emp2.EmpID,
-                            daysWorked,
-                        };
-                    }
-                }
-            }
-        }
-    }
-    if(longestPair.emp1 && longestPair.emp2){
-		return `${longestPair.emp1}, ${longestPair.emp2}, ${longestPair.daysWorked}`;
+	for (let i = 0; i < tableData.length; i++) {
+		for (let j = i + 1; j < tableData.length; j++) {
+			console.log(tableData[i].ProjectID);
+			if (
+				tableData[i].EmpID !== tableData[j].EmpID &&
+				tableData[i].ProjectID === tableData[j].ProjectID
+			) {
+				console.log("hello");
+				const dateFrom1 = moment(tableData[i].DateFrom, "YYYY-MM-DD");
+				const dateTo1 = moment(tableData[i].DateTo, "YYYY-MM-DD");
+				const dateFrom2 = moment(tableData[j].DateFrom, "YYYY-MM-DD");
+				const dateTo2 = moment(tableData[j].DateTo, "YYYY-MM-DD");
+
+				const overlapStart = moment.max(dateFrom1, dateFrom2);
+				const overlapEnd = moment.min(dateTo1, dateTo2);
+				const overlapDays = overlapEnd.diff(overlapStart, "days") + 1;
+				console.log(overlapDays);
+				if (overlapDays > longestWorkingPairDays) {
+					longestWorkingPairDays = overlapDays;
+					longestWorkingPair = {
+						emp1: tableData[i].EmpID,
+						emp2: tableData[j].EmpID,
+						days: overlapDays,
+					};
+				}
+			}
+		}
 	}
-	return "no data available";
+	return longestWorkingPair;
 };
-
-
-// const findLongestWorkingPair = (tableData) => {
-//     let longestPair = { emp1: null, emp2: null, daysWorked: 0 };
-//     if(!tableData || tableData.length === 0) {
-//         return "no data available";
-//     }
-//     for (let i = 0; i < tableData.length; i++) {
-//         for (let j = i + 1; j < tableData.length; j++) {
-//             let emp1 = tableData[i];
-//             let emp2 = tableData[j];
-
-//             if (emp1.EmpID !== emp2.EmpID && emp1.ProjectID === emp2.ProjectID) {
-				
-//                 let dateFrom1 = moment(emp1.DateFrom, "YYYY-MM-DD");
-//                 let dateTo1 = moment(emp1.DateTo, "YYYY-MM-DD");
-//                 let dateFrom2 = moment(emp2.DateFrom, "YYYY-MM-DD");
-//                 let dateTo2 = moment(emp2.DateTo, "YYYY-MM-DD");
-				
-//                 if ((dateFrom1 >= dateFrom2) && (dateTo1 >= dateTo2)) {
-					
-//                   let daysWorked = moment.duration(moment.min(dateFrom1, dateTo1).diff(moment.max(dateFrom2, dateTo2))).asDays();
-// 				  console.log('in the if statement', daysWorked )
-//                     if (daysWorked > longestPair.daysWorked) {
-//                         longestPair = {
-//                             emp1: emp1.EmpID,
-//                             emp2: emp2.EmpID,
-//                             daysWorked,
-//                         };
-//                     }
-//                 }
-//             }
-//         }
-//     }
-//     if(longestPair.emp1 && longestPair.emp2){
-// 		return `${longestPair.emp1}, ${longestPair.emp2}, ${longestPair.daysWorked}`;
-// 	}
-// 	return "no data available";
-// };
 
 const FileUpload = () => {
 	const [file, setFile] = useState(null);
@@ -88,7 +47,7 @@ const FileUpload = () => {
 	const fileInputRef = useRef(null);
 	const [isDataLoaded, setIsDataLoaded] = useState(false);
 	const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-	const [longestWorkingPair, setLongestWorkingPair] = useState(null);
+	const [longestWorkingPair, setLongestWorkingPair] = useState({});
 
 	const handleFileUpload = (e) => {
 		let selectedFile = e.target.files[0];
@@ -120,12 +79,11 @@ const FileUpload = () => {
 				header: true,
 				skipEmptyLines: true,
 			});
-			setTableData(data.data);			
+			setTableData(data.data);
 			setIsDataLoaded(true);
-		  setLongestWorkingPair(findLongestWorkingPair(data.data));
+			setLongestWorkingPair(findLongestWorkingPair(data.data));
 		};
-	  };
-	  
+	};
 
 	const clearTableData = () => {
 		setFile(null);
@@ -135,10 +93,10 @@ const FileUpload = () => {
 		setIsDataLoaded(false);
 	};
 
-	const handleLongestWorkingPair = () => {
-		const result = findLongestWorkingPair(tableData);
-		setLongestWorkingPair(result);
-	};
+	// const handleLongestWorkingPair = () => {
+	// 	const result = findLongestWorkingPair(tableData);
+	// 	setLongestWorkingPair(result);
+	// };
 
 	return (
 		<div className="container">
@@ -147,14 +105,6 @@ const FileUpload = () => {
 				ref={fileInputRef}
 				onChange={(e) => handleFileUpload(e)}
 			/>
-			<button
-				onClick={() =>
-					isDataLoaded ? clearTableData() : parseCSVData()
-				}
-				disabled={isButtonDisabled}
-			>
-				{isDataLoaded ? "Clear" : "Submit"}
-			</button>
 			{tableData.length === 0 ? (
 				<p>No data to display</p>
 			) : (
@@ -181,12 +131,25 @@ const FileUpload = () => {
 			)}
 			{isDataLoaded && (
 				<>
-					<button onClick={handleLongestWorkingPair}>
-						Worked Together Longest
-					</button>
-					{longestWorkingPair && <p>{longestWorkingPair}</p>}
+					<h3>Worked Together & Longest</h3>
+					{longestWorkingPair ? (
+						<div>
+							{longestWorkingPair.emp1},{longestWorkingPair.emp2},
+							{longestWorkingPair.days}{" "}
+						</div>
+					) : (
+						<div>No Data</div>
+					)}
 				</>
 			)}
+			<button
+				onClick={() =>
+					isDataLoaded ? clearTableData() : parseCSVData()
+				}
+				disabled={isButtonDisabled}
+			>
+				{isDataLoaded ? "Clear" : "Submit"}
+			</button>
 		</div>
 	);
 };
