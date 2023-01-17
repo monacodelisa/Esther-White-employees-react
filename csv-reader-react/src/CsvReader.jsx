@@ -3,29 +3,26 @@ import Papa from "papaparse";
 import "./CsvReader.scss";
 
 const findLongestWorkingPair = (tableData) => {
-	let longestPair = { emp1: null, emp2: null, daysWorked: 0 };
+    let longestPair = { emp1: null, emp2: null, daysWorked: 0 };
 
-	for (let i = 0; i < tableData.length; i++) {
-		for (let j = i + 1; j < tableData.length; j++) {
-			let emp1 = tableData[i];
-			let emp2 = tableData[j];
+    for (let i = 0; i < tableData.length; i++) {
+        for (let j = i + 1; j < tableData.length; j++) {
+            let emp1 = tableData[i];
+            let emp2 = tableData[j];
 
-			if (
-				emp1.EmpID !== emp2.EmpID &&
-				emp1.ProjectID === emp2.ProjectID
-			) {
-				let dateFrom1 = new Date(emp1.DateFrom);
-				let dateTo1 = new Date(emp1.DateTo);
-				let dateFrom2 = new Date(emp2.DateFrom);
-				let dateTo2 = new Date(emp2.DateTo);
-
-				let daysWorked = 0;
-				if (dateFrom1 < dateTo2 && dateFrom2 < dateTo1) {
-					daysWorked =
-						Math.min(dateTo1, dateTo2) -
-						Math.max(dateFrom1, dateFrom2);
+            if (emp1.EmpID !== emp2.EmpID && emp1.ProjectID === emp2.ProjectID) {
+				let dateFrom1 = Date.parse(emp1.DateFrom);
+				let dateTo1 = Date.parse(emp1.DateTo);
+				let dateFrom2 = Date.parse(emp2.DateFrom);
+				let dateTo2 = Date.parse(emp2.DateTo);
+				
+				if(isNaN(dateFrom1) || isNaN(dateTo1) || isNaN(dateFrom2) || isNaN(dateTo2)){
+                    console.log("Invalid date format")
+					continue;
 				}
-
+				
+				let daysWorked = Math.min(dateTo1, dateTo2) - Math.max(dateFrom1, dateFrom2);
+				
 				if (daysWorked > longestPair.daysWorked) {
 					longestPair = {
 						emp1: emp1.EmpID,
@@ -33,12 +30,13 @@ const findLongestWorkingPair = (tableData) => {
 						daysWorked,
 					};
 				}
-			}
-		}
-	}
+            }
+        }
+    }
 
-	return `${longestPair.emp1}, ${longestPair.emp2}, ${longestPair.daysWorked}`;
+    return `${longestPair.emp1}, ${longestPair.emp2}, ${longestPair.daysWorked}`;
 };
+
 
 const FileUpload = () => {
 	const [file, setFile] = useState(null);
@@ -81,8 +79,10 @@ const FileUpload = () => {
 			});
 			setTableData(data.data);
 			setIsDataLoaded(true);
+		  setLongestWorkingPair(findLongestWorkingPair(data.data));
 		};
-	};
+	  };
+	  
 
 	const clearTableData = () => {
 		setFile(null);
