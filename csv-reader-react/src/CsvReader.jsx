@@ -93,11 +93,6 @@ const FileUpload = () => {
 		setIsDataLoaded(false);
 	};
 
-	// const handleLongestWorkingPair = () => {
-	// 	const result = findLongestWorkingPair(tableData);
-	// 	setLongestWorkingPair(result);
-	// };
-
 	return (
 		<div className="container">
 			<input

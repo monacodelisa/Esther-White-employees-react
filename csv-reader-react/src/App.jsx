@@ -1,8 +1,18 @@
 import { Helmet } from 'react-helmet';
 import CsvReader from './CsvReader';
+import HeaderComponent from './Header';
+import FooterComponent from './Footer';
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faLinkedin } from "@fortawesome/free-brands-svg-icons";
+import { faGithub } from "@fortawesome/free-brands-svg-icons";
+import { faYoutube } from "@fortawesome/free-brands-svg-icons";
+import { faTwitter } from "@fortawesome/free-brands-svg-icons";
+
 import './App.scss';
 
 function App() {
+  library.add(faLinkedin, faGithub, faYoutube, faTwitter);
+
   return (
     <div className="App">
       <Helmet>
@@ -13,7 +23,9 @@ function App() {
       </Helmet>
 
       <header className="App-header">
+          <HeaderComponent/>
           <CsvReader/>
+          <FooterComponent/>
       </header>
     </div>
   );
