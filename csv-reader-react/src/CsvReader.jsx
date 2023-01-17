@@ -1,42 +1,85 @@
 import React, { useState, useRef } from "react";
 import Papa from "papaparse";
+import moment from 'moment'
 import "./CsvReader.scss";
+
+// const moment = require('moment');
 
 const findLongestWorkingPair = (tableData) => {
     let longestPair = { emp1: null, emp2: null, daysWorked: 0 };
-
+    if(!tableData || tableData.length === 0) {
+        return "no data available";
+    }
     for (let i = 0; i < tableData.length; i++) {
         for (let j = i + 1; j < tableData.length; j++) {
             let emp1 = tableData[i];
             let emp2 = tableData[j];
 
             if (emp1.EmpID !== emp2.EmpID && emp1.ProjectID === emp2.ProjectID) {
-				let dateFrom1 = Date.parse(emp1.DateFrom);
-				let dateTo1 = Date.parse(emp1.DateTo);
-				let dateFrom2 = Date.parse(emp2.DateFrom);
-				let dateTo2 = Date.parse(emp2.DateTo);
-				
-				if(isNaN(dateFrom1) || isNaN(dateTo1) || isNaN(dateFrom2) || isNaN(dateTo2)){
-                    console.log("Invalid date format")
-					continue;
-				}
-				
-				let daysWorked = Math.min(dateTo1, dateTo2) - Math.max(dateFrom1, dateFrom2);
-				
-				if (daysWorked > longestPair.daysWorked) {
-					longestPair = {
-						emp1: emp1.EmpID,
-						emp2: emp2.EmpID,
-						daysWorked,
-					};
-				}
+                let dateFrom1 = moment(emp1.DateFrom, "YYYY-MM-DD");
+                let dateTo1 = moment(emp1.DateTo, "YYYY-MM-DD");
+                let dateFrom2 = moment(emp2.DateFrom, "YYYY-MM-DD");
+                let dateTo2 = moment(emp2.DateTo, "YYYY-MM-DD");
+                let overlapStart = moment.min(dateFrom1, dateFrom2);
+                let overlapEnd = moment.max(dateTo1, dateTo2);
+                if (overlapStart.isBefore(overlapEnd)) {
+                  let daysWorked = overlapEnd.diff(overlapStart, 'days') + 1;
+				  console.log(daysWorked)
+                    if (daysWorked > longestPair.daysWorked) {
+                        longestPair = {
+                            emp1: emp1.EmpID,
+                            emp2: emp2.EmpID,
+                            daysWorked,
+                        };
+                    }
+                }
             }
         }
     }
-
-    return `${longestPair.emp1}, ${longestPair.emp2}, ${longestPair.daysWorked}`;
+    if(longestPair.emp1 && longestPair.emp2){
+		return `${longestPair.emp1}, ${longestPair.emp2}, ${longestPair.daysWorked}`;
+	}
+	return "no data available";
 };
 
+
+// const findLongestWorkingPair = (tableData) => {
+//     let longestPair = { emp1: null, emp2: null, daysWorked: 0 };
+//     if(!tableData || tableData.length === 0) {
+//         return "no data available";
+//     }
+//     for (let i = 0; i < tableData.length; i++) {
+//         for (let j = i + 1; j < tableData.length; j++) {
+//             let emp1 = tableData[i];
+//             let emp2 = tableData[j];
+
+//             if (emp1.EmpID !== emp2.EmpID && emp1.ProjectID === emp2.ProjectID) {
+				
+//                 let dateFrom1 = moment(emp1.DateFrom, "YYYY-MM-DD");
+//                 let dateTo1 = moment(emp1.DateTo, "YYYY-MM-DD");
+//                 let dateFrom2 = moment(emp2.DateFrom, "YYYY-MM-DD");
+//                 let dateTo2 = moment(emp2.DateTo, "YYYY-MM-DD");
+				
+//                 if ((dateFrom1 >= dateFrom2) && (dateTo1 >= dateTo2)) {
+					
+//                   let daysWorked = moment.duration(moment.min(dateFrom1, dateTo1).diff(moment.max(dateFrom2, dateTo2))).asDays();
+// 				  console.log('in the if statement', daysWorked )
+//                     if (daysWorked > longestPair.daysWorked) {
+//                         longestPair = {
+//                             emp1: emp1.EmpID,
+//                             emp2: emp2.EmpID,
+//                             daysWorked,
+//                         };
+//                     }
+//                 }
+//             }
+//         }
+//     }
+//     if(longestPair.emp1 && longestPair.emp2){
+// 		return `${longestPair.emp1}, ${longestPair.emp2}, ${longestPair.daysWorked}`;
+// 	}
+// 	return "no data available";
+// };
 
 const FileUpload = () => {
 	const [file, setFile] = useState(null);
@@ -77,7 +120,7 @@ const FileUpload = () => {
 				header: true,
 				skipEmptyLines: true,
 			});
-			setTableData(data.data);
+			setTableData(data.data);			
 			setIsDataLoaded(true);
 		  setLongestWorkingPair(findLongestWorkingPair(data.data));
 		};
