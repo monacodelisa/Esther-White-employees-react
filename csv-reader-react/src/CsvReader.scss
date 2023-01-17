@@ -1,6 +1,6 @@
 .container {
     background-color: #a8a8a8;
-    margin: 7rem auto;
+    margin: 3rem auto;
     padding: 3rem 5rem;
     width: 30rem;
     border-radius: 0.5rem;
@@ -16,18 +16,29 @@
     
     button {
         display: block;
-        padding: 0.3rem 1rem;
+        padding: 0.4rem 1rem;
         margin: 2rem auto;
         cursor: pointer;
+        font-size: 1rem;
+        border: none;
+        border-radius: 0.3rem;
+        box-shadow: 0 0 3px 2px #47474770;
+
+        &:hover {
+            transform: scale(1.2);
+            transition: ease-in-out 0.4s;
+        }
     }
 
     table {
+        background-color: #e3e3e3;
         border-spacing: 0;
         border-collapse: collapse;
         padding: 0.1rem 0.5rem;
         margin: 2rem 0;
 
         th {
+            background-color: #9b9b9b;
             padding: 0.1rem 2rem;
             border: 1px solid grey;          
         }
@@ -35,5 +46,9 @@
         td {
             border: 1px solid grey;                   
         }
+    }
+
+    .results {
+        font-size: 3rem;;
     }
 }

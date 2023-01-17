@@ -128,7 +128,7 @@ const FileUpload = () => {
 				<>
 					<h3>Worked Together & Longest</h3>
 					{longestWorkingPair ? (
-						<div>
+						<div className="results">
 							{longestWorkingPair.emp1},{longestWorkingPair.emp2},
 							{longestWorkingPair.days}{" "}
 						</div>
