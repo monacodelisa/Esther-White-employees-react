@@ -9,24 +9,24 @@ const FooterComponent = () => {
 					created by Esther White
 					<a
 						className="my-username"
-						href="https://esteecodes.com/"
+						href="https://monacodelisa.com/"
 						target="_blank"
 						rel="noreferrer"
 					>
-						&#123;&#123; esteecodes &#125;&#125;
+						&#123;&#123; MonaCodeLisa &#125;&#125;
 					</a>
 				</p>
 			</div>
 			<div className="social-links">
 				<a
-					href="https://www.linkedin.com/in/esteecodes/"
+					href="https://www.linkedin.com/in/monacodelisa/"
 					target="_blank"
 					rel="noreferrer"
 				>
 					<FontAwesomeIcon icon="fa-brands fa-linkedin" />
 				</a>
 				<a
-					href="https://github.com/esteecodes"
+					href="https://github.com/monacodelisa"
 					target="_blank"
 					rel="noreferrer"
 				>
